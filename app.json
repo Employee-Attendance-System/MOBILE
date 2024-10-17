@@ -23,7 +23,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#47D5C0"
       },
-      "package": "com.mendigitalkan.fresh-absensi",
+      "package": "com.mendigitalkan.freshabsensi",
       "permissions": ["ACCESS_FINE_LOCATION"]
     },
     "web": {
