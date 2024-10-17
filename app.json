@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "fresh-absensi",
+    "slug": "fresh-absensi",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#47D5C0"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "versionCode": 16,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#47D5C0"
+      },
+      "package": "com.mendigitalkan.fresh-absensi",
+      "permissions": ["ACCESS_FINE_LOCATION"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {}
+    }
+  },
+  "plugins": [
+    [
+      "expo-location",
+      {
+        "locationAlwaysAndWhenInUsePermission": "Allow this app to use your location."
+      }
+    ]
+  ]
+}
