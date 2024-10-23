@@ -12,7 +12,11 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 import Layout from '../../components/Layout'
 import { INavigationParamList } from '../../models/navigationModel'
-import { useLayoutEffect } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { useHttp } from '../../hooks/useHttp'
+import { IJadwalModel } from '../../models/jadwalModel'
+import { convertISOToRegular } from '../../utilities/convertTime'
+import { RefreshControl } from 'react-native'
 
 type ListScheduleScreenViewPropsTypes = NativeStackScreenProps<
   INavigationParamList,
@@ -22,35 +26,40 @@ type ListScheduleScreenViewPropsTypes = NativeStackScreenProps<
 export default function ListScheduleScreenView({
   navigation
 }: ListScheduleScreenViewPropsTypes) {
-  const schedules = [
-    {
-      id: 1,
-      scheduleName: 'Morning Shift',
-      scheduleDescription: 'Morning shift for Toko A',
-      scheduleTokoId: 54324,
-      scheduleSpgId: 1001,
-      scheduleStartDate: '2024-10-15',
-      scheduleEndDate: '2024-10-15'
-    },
-    {
-      id: 2,
-      scheduleName: 'Afternoon Shift',
-      scheduleDescription: 'Afternoon shift for Toko B',
-      scheduleTokoId: 44334,
-      scheduleSpgId: 1002,
-      scheduleStartDate: '2024-10-16',
-      scheduleEndDate: '2024-10-16'
-    },
-    {
-      id: 3,
-      scheduleName: 'Evening Shift',
-      scheduleDescription: 'Evening shift for Toko C',
-      scheduleTokoId: 34533,
-      scheduleSpgId: 1003,
-      scheduleStartDate: '2024-10-17',
-      scheduleEndDate: '2024-10-17'
+  const { handleGetTableDataRequest } = useHttp()
+  const [isLoading, setIsLoading] = useState(false)
+  const [pageSize, setpageSize] = useState(0)
+
+  const [jadwal, setJadwal] = useState<IJadwalModel[]>([])
+
+  const getSchedules = async () => {
+    try {
+      setIsLoading(true)
+      const result = await handleGetTableDataRequest({
+        path: '/jadwal',
+        page: pageSize,
+        size: 10,
+        filter: {}
+      })
+      if (result) {
+        setJadwal(result.items)
+      }
+
+      console.log(result.items)
+    } catch (error: any) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
     }
-  ]
+  }
+
+  const onRefresh = useCallback(async () => {
+    await getSchedules()
+  }, [])
+
+  useEffect(() => {
+    getSchedules()
+  }, [])
 
   const handleEdit = (id: number) => {
     // Navigate to edit screen with the selected schedule id
@@ -81,7 +90,8 @@ export default function ListScheduleScreenView({
   return (
     <Layout>
       <FlatList
-        data={schedules}
+        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
+        data={jadwal}
         renderItem={({ item }) => (
           <VStack>
             <HStack
@@ -94,12 +104,13 @@ export default function ListScheduleScreenView({
               px={4}
             >
               <VStack flex={1}>
-                <Text fontWeight='bold'>{item.scheduleName}</Text>
+                <Text fontWeight='bold'>{item.jadwalName}</Text>
                 <Text fontSize='sm' color='gray.400'>
-                  {item.scheduleDescription}
+                  {item.jadwalDescription}
                 </Text>
                 <Text fontSize='sm' color='gray.400'>
-                  Start: {item.scheduleStartDate} | End: {item.scheduleEndDate}
+                  Start: {convertISOToRegular(item.jadwalStartDate)} | End:
+                  {convertISOToRegular(item.jadwalEndDate)}
                 </Text>
               </VStack>
               <HStack space={2}>
@@ -112,14 +123,14 @@ export default function ListScheduleScreenView({
                       color='blue.500'
                     />
                   }
-                  onPress={() => handleEdit(item.id)}
+                  onPress={() => handleEdit(item.jadwalId)}
                   _pressed={{ bg: 'blue.100' }}
                 />
                 <IconButton
                   icon={
                     <Icon as={Ionicons} name='trash-outline' size='lg' color='red.500' />
                   }
-                  onPress={() => handleDelete(item.id)}
+                  onPress={() => handleDelete(item.jadwalId)}
                   _pressed={{ bg: 'red.100' }}
                 />
               </HStack>
@@ -127,7 +138,7 @@ export default function ListScheduleScreenView({
             <Divider />
           </VStack>
         )}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.jadwalId.toString()}
       />
     </Layout>
   )

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import {
   VStack,
   Input,
@@ -17,6 +17,9 @@ import Layout from '../../components/Layout'
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
 import moment from 'moment'
 import { MaterialIcons } from '@expo/vector-icons'
+import { useHttp } from '../../hooks/useHttp'
+import { ITokoModel } from '../../models/tokoModel'
+import { IJadwalCreateRequestModel } from '../../models/jadwalModel'
 
 type CreateScheduleScreenViewPropsTypes = NativeStackScreenProps<
   INavigationParamList,
@@ -26,6 +29,9 @@ type CreateScheduleScreenViewPropsTypes = NativeStackScreenProps<
 export default function CreateScheduleScreenView({
   navigation
 }: CreateScheduleScreenViewPropsTypes) {
+  const { handleGetRequest, handlePostRequest } = useHttp()
+  const [isLoading, setIsLoading] = useState(false)
+  const [toko, setToko] = useState<ITokoModel[]>([])
   const [schedule, setSchedule] = useState({
     scheduleName: '',
     scheduleDescription: '',
@@ -34,14 +40,30 @@ export default function CreateScheduleScreenView({
     scheduleEndDate: ''
   })
 
-  const handleCreateTask = () => {
+  const handleCreateTask = async () => {
     console.log(schedule)
     if (moment(schedule.scheduleStartDate).isAfter(moment(schedule.scheduleEndDate))) {
       alert('Invalid Date. Start date cannot be after end date.')
       return
     } else {
-      console.log(schedule)
-      navigation.goBack()
+      const payload: IJadwalCreateRequestModel = {
+        jadwalName: schedule.scheduleName,
+        jadwalDescription: schedule.scheduleDescription,
+        jadwalTokoId: schedule.scheduleTokoId,
+        jadwalUserId: 1,
+        jadwalStartDate: schedule.scheduleStartDate,
+        jadwalEndDate: schedule.scheduleEndDate,
+        jadwalStatus: 'waiting'
+      }
+      try {
+        const result = await handlePostRequest({
+          path: '/jadwal',
+          body: payload
+        })
+        navigation.goBack()
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
@@ -84,6 +106,27 @@ export default function CreateScheduleScreenView({
       }
     })
   }
+
+  const getToko = async () => {
+    try {
+      setIsLoading(true)
+      const result = await handleGetRequest({
+        path: '/toko'
+      })
+      if (result) {
+        setToko(result.items)
+        console.log(result)
+      }
+    } catch (error: any) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    getToko()
+  }, [])
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -131,9 +174,13 @@ export default function CreateScheduleScreenView({
               endIcon: <CheckIcon size='5' />
             }}
           >
-            <Select.Item label='54324 (Toko A)' value='54324' />
-            <Select.Item label='44334 (Toko B)' value='44334' />
-            <Select.Item label='34533 (Toko C)' value='34533' />
+            {toko.map((item) => (
+              <Select.Item
+                key={item.id}
+                label={item.tokoName}
+                value={item.tokoId.toString()}
+              />
+            ))}
           </Select>
         </FormControl>
 

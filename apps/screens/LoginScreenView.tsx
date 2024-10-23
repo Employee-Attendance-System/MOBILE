@@ -21,6 +21,7 @@ import { IUserLoginRequestModel } from '../models/userModel'
 import { useAuthToken } from '../hooks/token'
 import { useAppContext } from '../context/app.context'
 import { INavigationParamList } from '../models/navigationModel'
+import { appConfig } from '../configs'
 
 type LoginScreenViewPropsTypes = NativeStackScreenProps<INavigationParamList, 'Login'>
 
@@ -188,7 +189,7 @@ export default function LoginScreenView({ navigation }: LoginScreenViewPropsType
           <Pressable
             onPress={handleSubmit}
             disabled={isLoading}
-            bg={BASE_COLOR.green}
+            bg={appConfig.colors.primary}
             p='2'
             rounded='xl'
           >

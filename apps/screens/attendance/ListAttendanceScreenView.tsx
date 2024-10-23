@@ -12,7 +12,9 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 import Layout from '../../components/Layout'
 import { INavigationParamList } from '../../models/navigationModel'
-import { useLayoutEffect } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { IJadwalCreateRequestModel, IJadwalModel } from '../../models/attendanceModel'
+import { useHttp } from '../../hooks/useHttp'
 
 type AttendanceScreenViewPropsTypes = NativeStackScreenProps<
   INavigationParamList,
@@ -22,35 +24,39 @@ type AttendanceScreenViewPropsTypes = NativeStackScreenProps<
 export default function AttendanceScreenView({
   navigation
 }: AttendanceScreenViewPropsTypes) {
-  const attendanceData = [
-    {
-      id: 1,
-      checkIn: '09:00 AM',
-      checkOut: '05:00 PM',
-      status: 'Present',
-      storeName: 'Toko A',
-      scheduleName: 'Morning Shift',
-      date: '2024-10-15'
-    },
-    {
-      id: 2,
-      checkIn: '09:30 AM',
-      checkOut: '05:15 PM',
-      status: 'Present',
-      storeName: 'Toko B',
-      scheduleName: 'Afternoon Shift',
-      date: '2024-10-16'
-    },
-    {
-      id: 3,
-      checkIn: null,
-      checkOut: null,
-      status: 'Absent',
-      storeName: 'Toko C',
-      scheduleName: 'Evening Shift',
-      date: '2024-10-17'
+  const [attendance, setAttendance] = useState<IJadwalModel[]>([])
+  const { handleGetTableDataRequest } = useHttp()
+  const [isLoading, setIsLoading] = useState(false)
+  const [pageSize, setpageSize] = useState(0)
+
+  const getAttendance = async () => {
+    try {
+      setIsLoading(true)
+      const result = await handleGetTableDataRequest({
+        path: '/jadwal',
+        page: pageSize,
+        size: 10,
+        filter: {}
+      })
+      if (result) {
+        setAttendance(result.items)
+      }
+
+      console.log(result.items)
+    } catch (error: any) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
     }
-  ]
+  }
+
+  const onRefresh = useCallback(async () => {
+    await getAttendance()
+  }, [])
+
+  useEffect(() => {
+    getAttendance()
+  }, [])
 
   const handleCheckIn = (id: number) => {
     // Logic for check-in
@@ -62,25 +68,10 @@ export default function AttendanceScreenView({
     console.log(`Check-out for user with id: ${id}`)
   }
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <HStack marginRight={5}>
-          <Button
-            variant={'outline'}
-            // onPress={() => navigation.navigate('')}
-          >
-            Create
-          </Button>
-        </HStack>
-      )
-    })
-  }, [])
-
   return (
     <Layout>
       <FlatList
-        data={attendanceData}
+        data={attendance}
         renderItem={({ item }) => (
           <VStack>
             <HStack
@@ -94,14 +85,14 @@ export default function AttendanceScreenView({
             >
               <VStack flex={1}>
                 <Text fontSize='lg' fontWeight='bold'>
-                  {item.storeName}
+                  {item.toko.tokoName}
                 </Text>
                 <Text fontSize='sm' color='gray.400'>
-                  Schedule: {item.scheduleName} | Date: {item.date}
+                  Schedule: {item.jadwalName} | Date: {item.jadwalEndDate}
                 </Text>
               </VStack>
               <HStack space={2}>
-                {item.status !== 'Present' ? (
+                {item.jadwalStatus !== 'Present' ? (
                   <Button
                     leftIcon={<Icon as={Ionicons} name='checkmark-outline' />}
                     colorScheme='blue'
@@ -125,7 +116,7 @@ export default function AttendanceScreenView({
             <Divider />
           </VStack>
         )}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.jadwalId.toString()}
       />
     </Layout>
   )
