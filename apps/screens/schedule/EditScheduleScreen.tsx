@@ -19,17 +19,21 @@ import moment from 'moment'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useHttp } from '../../hooks/useHttp'
 import { ITokoModel } from '../../models/tokoModel'
-import { IJadwalCreateRequestModel } from '../../models/jadwalModel'
+import {
+  IJadwalCreateRequestModel,
+  IJadwalUpdateRequestModel
+} from '../../models/jadwalModel'
 
-type CreateScheduleScreenViewPropsTypes = NativeStackScreenProps<
+type EditScheduleScreenViewPropsTypes = NativeStackScreenProps<
   INavigationParamList,
-  'CreateSchedule'
+  'EditSchedule'
 >
 
-export default function CreateScheduleScreenView({
-  navigation
-}: CreateScheduleScreenViewPropsTypes) {
-  const { handleGetRequest, handlePostRequest } = useHttp()
+export default function EditScheduleScreenView({
+  navigation,
+  route
+}: EditScheduleScreenViewPropsTypes) {
+  const { handleGetRequest, handleUpdateRequest } = useHttp()
   const [isLoading, setIsLoading] = useState(false)
   const [toko, setToko] = useState<ITokoModel[]>([])
   const [schedule, setSchedule] = useState({
@@ -46,7 +50,8 @@ export default function CreateScheduleScreenView({
       alert('Invalid Date. Start date cannot be after end date.')
       return
     } else {
-      const payload: IJadwalCreateRequestModel = {
+      const payload: IJadwalUpdateRequestModel = {
+        jadwalId: route.params.id,
         jadwalName: schedule.scheduleName,
         jadwalDescription: schedule.scheduleDescription,
         jadwalTokoId: schedule.scheduleTokoId,
@@ -56,7 +61,7 @@ export default function CreateScheduleScreenView({
         jadwalStatus: 'waiting'
       }
       try {
-        const result = await handlePostRequest({
+        await handleUpdateRequest({
           path: '/jadwal',
           body: payload
         })
@@ -124,13 +129,37 @@ export default function CreateScheduleScreenView({
     }
   }
 
+  const getSchedule = async () => {
+    try {
+      setIsLoading(true)
+      const result = await handleGetRequest({
+        path: '/jadwal/detail/' + route.params.id
+      })
+      if (result) {
+        // setSchedule(result.items)
+        setSchedule({
+          scheduleName: result.jadwalName,
+          scheduleDescription: result.jadwalDescription,
+          scheduleTokoId: result.jadwalTokoId,
+          scheduleStartDate: '',
+          scheduleEndDate: ''
+        })
+      }
+    } catch (error: any) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   useEffect(() => {
     getToko()
+    getSchedule()
   }, [])
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: 'Buat Jadwal'
+      title: 'Edit Jadwal'
     })
   }, [navigation])
 

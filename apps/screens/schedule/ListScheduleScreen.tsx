@@ -63,7 +63,7 @@ export default function ListScheduleScreenView({
 
   const handleEdit = (id: number) => {
     // Navigate to edit screen with the selected schedule id
-    // navigation.navigate('EditSchedule', { id })
+    navigation.navigate('EditSchedule', { id })
   }
 
   const handleDelete = (id: number) => {

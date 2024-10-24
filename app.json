@@ -8,7 +8,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#47D5C0"
+      "backgroundColor": "#3b82f6"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -21,7 +21,7 @@
       "versionCode": 16,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#47D5C0"
+        "backgroundColor": "#3b82f6"
       },
       "package": "com.mendigitalkan.freshabsensi",
       "permissions": ["ACCESS_FINE_LOCATION"]

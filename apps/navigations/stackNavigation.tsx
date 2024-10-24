@@ -9,6 +9,7 @@ import SignUpScreenView from '../screens/SignInScreenView'
 import AttendanceScreenView from '../screens/attendance/ListAttendanceScreenView'
 import ListScheduleScreenView from '../screens/schedule/ListScheduleScreen'
 import CreateScheduleScreenView from '../screens/schedule/CreateScheduleScreen'
+import EditScheduleScreenView from '../screens/schedule/EditScheduleScreen'
 
 const Stack = createNativeStackNavigator<INavigationParamList>()
 
@@ -36,6 +37,7 @@ export default function StackNavigations() {
           />
           <Stack.Screen name='Schedule' component={ListScheduleScreenView} />
           <Stack.Screen name='CreateSchedule' component={CreateScheduleScreenView} />
+          <Stack.Screen name='EditSchedule' component={EditScheduleScreenView} />
           <Stack.Screen name='Attendance' component={AttendanceScreenView} />
         </>
       )}

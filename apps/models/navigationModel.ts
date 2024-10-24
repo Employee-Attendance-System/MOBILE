@@ -8,5 +8,6 @@ export type INavigationParamList = {
   Notification: undefined
   Schedule: undefined
   CreateSchedule: undefined
+  EditSchedule: { id: number }
   Attendance: undefined
 }
