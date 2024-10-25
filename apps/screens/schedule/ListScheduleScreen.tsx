@@ -7,7 +7,10 @@ import {
   FlatList,
   Divider,
   Icon,
-  IconButton
+  IconButton,
+  Modal,
+  FormControl,
+  Input
 } from 'native-base'
 import { Ionicons } from '@expo/vector-icons'
 import Layout from '../../components/Layout'
@@ -26,10 +29,11 @@ type ListScheduleScreenViewPropsTypes = NativeStackScreenProps<
 export default function ListScheduleScreenView({
   navigation
 }: ListScheduleScreenViewPropsTypes) {
-  const { handleGetTableDataRequest } = useHttp()
+  const { handleGetTableDataRequest, handleRemoveRequest } = useHttp()
   const [isLoading, setIsLoading] = useState(false)
   const [pageSize, setpageSize] = useState(0)
-
+  const [showModalDelet, setShowModalDelete] = useState(false)
+  const [modalDeleteData, setModalDeleteData] = useState<IJadwalModel>()
   const [jadwal, setJadwal] = useState<IJadwalModel[]>([])
 
   const getSchedules = async () => {
@@ -66,10 +70,19 @@ export default function ListScheduleScreenView({
     navigation.navigate('EditSchedule', { id })
   }
 
-  const handleDelete = (id: number) => {
-    // Logic to delete the schedule
-    console.log(`Delete schedule with id: ${id}`)
-    // Here you would likely call an API or remove the item from state
+  const handleDeleteJadwalItem = async () => {
+    setIsLoading(true)
+    try {
+      await handleRemoveRequest({
+        path: '/jadwal/' + modalDeleteData?.jadwalId
+      })
+    } catch (error: any) {
+      console.log(error)
+    } finally {
+      await getSchedules()
+      setShowModalDelete(false)
+      setIsLoading(false)
+    }
   }
 
   useLayoutEffect(() => {
@@ -130,7 +143,10 @@ export default function ListScheduleScreenView({
                   icon={
                     <Icon as={Ionicons} name='trash-outline' size='lg' color='red.500' />
                   }
-                  onPress={() => handleDelete(item.jadwalId)}
+                  onPress={() => {
+                    setShowModalDelete(true)
+                    setModalDeleteData(item)
+                  }}
                   _pressed={{ bg: 'red.100' }}
                 />
               </HStack>
@@ -140,6 +156,31 @@ export default function ListScheduleScreenView({
         )}
         keyExtractor={(item) => item.jadwalId.toString()}
       />
+      <Modal isOpen={showModalDelet} onClose={() => setShowModalDelete(false)}>
+        <Modal.Content maxWidth='400px'>
+          <Modal.CloseButton />
+          <Modal.Header>Peringatan!</Modal.Header>
+          <Modal.Body>
+            <Text>Apakah anda yakin ingin menghapus jadwal ini?</Text>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button.Group space={2}>
+              <Button
+                variant='ghost'
+                colorScheme='blueGray'
+                onPress={() => {
+                  setShowModalDelete(false)
+                }}
+              >
+                Cancel
+              </Button>
+              <Button colorScheme={'red'} onPress={handleDeleteJadwalItem}>
+                Delete
+              </Button>
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
     </Layout>
   )
 }

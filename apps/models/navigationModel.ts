@@ -10,4 +10,5 @@ export type INavigationParamList = {
   CreateSchedule: undefined
   EditSchedule: { id: number }
   Attendance: undefined
+  DetailAttendance: { attendanceId: number }
 }

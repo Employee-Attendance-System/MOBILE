@@ -4,10 +4,12 @@ import {
   HStack,
   Text,
   Button,
+  Modal,
+  FormControl,
+  Input,
   FlatList,
   Divider,
-  Icon,
-  IconButton
+  Icon
 } from 'native-base'
 import { Ionicons } from '@expo/vector-icons'
 import Layout from '../../components/Layout'
@@ -15,6 +17,7 @@ import { INavigationParamList } from '../../models/navigationModel'
 import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { IJadwalCreateRequestModel, IJadwalModel } from '../../models/attendanceModel'
 import { useHttp } from '../../hooks/useHttp'
+import { RefreshControl, TouchableOpacity } from 'react-native'
 
 type AttendanceScreenViewPropsTypes = NativeStackScreenProps<
   INavigationParamList,
@@ -71,49 +74,46 @@ export default function AttendanceScreenView({
   return (
     <Layout>
       <FlatList
+        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
         data={attendance}
         renderItem={({ item }) => (
           <VStack>
-            <HStack
-              justifyContent='space-between'
-              py={4}
-              alignItems='center'
-              bg='white'
-              rounded='md'
-              shadow={1}
-              px={4}
+            <TouchableOpacity
+              onPress={() => navigation.navigate('DetailAttendance', { attendanceId: 1 })}
             >
-              <VStack flex={1}>
-                <Text fontSize='lg' fontWeight='bold'>
-                  {item.toko.tokoName}
-                </Text>
-                <Text fontSize='sm' color='gray.400'>
-                  Schedule: {item.jadwalName} | Date: {item.jadwalEndDate}
-                </Text>
-              </VStack>
-              <HStack space={2}>
-                {item.jadwalStatus !== 'Present' ? (
-                  <Button
-                    leftIcon={<Icon as={Ionicons} name='checkmark-outline' />}
-                    colorScheme='blue'
-                    variant={'outline'}
-                    onPress={() => handleCheckIn(item.id)}
-                  >
-                    Check In
-                  </Button>
-                ) : (
-                  <Button
-                    leftIcon={<Icon as={Ionicons} name='log-out-outline' />}
-                    colorScheme='red'
-                    variant={'outline'}
-                    onPress={() => handleCheckOut(item.id)}
-                  >
-                    Check Out
-                  </Button>
-                )}
+              <HStack
+                justifyContent='space-between'
+                py={4}
+                alignItems='center'
+                bg='white'
+                rounded='md'
+                px={4}
+              >
+                <VStack flex={1}>
+                  <Text fontSize='lg' fontWeight='bold'>
+                    {item.toko.tokoName}
+                  </Text>
+                  <Text fontSize='sm' color='gray.400'>
+                    Schedule: {item.jadwalName} | Date: {item.jadwalEndDate}
+                  </Text>
+                </VStack>
+                <HStack space={2}>
+                  {item.jadwalStatus !== 'Present' ? (
+                    <Text color={'blue'}>Check In</Text>
+                  ) : (
+                    <Button
+                      leftIcon={<Icon as={Ionicons} name='log-out-outline' />}
+                      colorScheme='red'
+                      variant={'outline'}
+                      onPress={() => handleCheckOut(item.id)}
+                    >
+                      Check Out
+                    </Button>
+                  )}
+                </HStack>
               </HStack>
-            </HStack>
-            <Divider />
+              <Divider />
+            </TouchableOpacity>
           </VStack>
         )}
         keyExtractor={(item) => item.jadwalId.toString()}
