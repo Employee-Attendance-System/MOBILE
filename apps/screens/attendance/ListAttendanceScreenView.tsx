@@ -15,9 +15,9 @@ import { Ionicons } from '@expo/vector-icons'
 import Layout from '../../components/Layout'
 import { INavigationParamList } from '../../models/navigationModel'
 import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
-import { IJadwalCreateRequestModel, IJadwalModel } from '../../models/attendanceModel'
 import { useHttp } from '../../hooks/useHttp'
 import { RefreshControl, TouchableOpacity } from 'react-native'
+import { IScheduleModel } from '../../models/scheduleModel'
 
 type AttendanceScreenViewPropsTypes = NativeStackScreenProps<
   INavigationParamList,
@@ -27,7 +27,7 @@ type AttendanceScreenViewPropsTypes = NativeStackScreenProps<
 export default function AttendanceScreenView({
   navigation
 }: AttendanceScreenViewPropsTypes) {
-  const [attendance, setAttendance] = useState<IJadwalModel[]>([])
+  const [attendance, setAttendance] = useState<IScheduleModel[]>([])
   const { handleGetTableDataRequest } = useHttp()
   const [isLoading, setIsLoading] = useState(false)
   const [pageSize, setpageSize] = useState(0)
@@ -36,7 +36,7 @@ export default function AttendanceScreenView({
     try {
       setIsLoading(true)
       const result = await handleGetTableDataRequest({
-        path: '/jadwal',
+        path: '/schedules',
         page: pageSize,
         size: 10,
         filter: {}
@@ -79,7 +79,9 @@ export default function AttendanceScreenView({
         renderItem={({ item }) => (
           <VStack>
             <TouchableOpacity
-              onPress={() => navigation.navigate('DetailAttendance', { attendanceId: 1 })}
+              onPress={() =>
+                navigation.navigate('DetailAttendance', { attendanceId: item.scheduleId })
+              }
             >
               <HStack
                 justifyContent='space-between'
@@ -91,32 +93,21 @@ export default function AttendanceScreenView({
               >
                 <VStack flex={1}>
                   <Text fontSize='lg' fontWeight='bold'>
-                    {item.toko.tokoName}
+                    {item.store.storeName}
                   </Text>
                   <Text fontSize='sm' color='gray.400'>
-                    Schedule: {item.jadwalName} | Date: {item.jadwalEndDate}
+                    Schedule: {item.scheduleName} | Date: {item.scheduleEndDate}
                   </Text>
                 </VStack>
                 <HStack space={2}>
-                  {item.jadwalStatus !== 'Present' ? (
-                    <Text color={'blue'}>Check In</Text>
-                  ) : (
-                    <Button
-                      leftIcon={<Icon as={Ionicons} name='log-out-outline' />}
-                      colorScheme='red'
-                      variant={'outline'}
-                      onPress={() => handleCheckOut(item.id)}
-                    >
-                      Check Out
-                    </Button>
-                  )}
+                  <Text color={'blue'}>{item.scheduleStatus}</Text>
                 </HStack>
               </HStack>
               <Divider />
             </TouchableOpacity>
           </VStack>
         )}
-        keyExtractor={(item) => item.jadwalId.toString()}
+        keyExtractor={(item) => item.scheduleId.toString()}
       />
     </Layout>
   )

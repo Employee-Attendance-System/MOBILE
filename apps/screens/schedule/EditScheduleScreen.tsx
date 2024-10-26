@@ -18,11 +18,8 @@ import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
 import moment from 'moment'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useHttp } from '../../hooks/useHttp'
-import { ITokoModel } from '../../models/tokoModel'
-import {
-  IJadwalCreateRequestModel,
-  IJadwalUpdateRequestModel
-} from '../../models/jadwalModel'
+import { IStoreModel } from '../../models/storeModel'
+import { IScheduleUpdateRequestModel } from '../../models/scheduleModel'
 
 type EditScheduleScreenViewPropsTypes = NativeStackScreenProps<
   INavigationParamList,
@@ -35,13 +32,14 @@ export default function EditScheduleScreenView({
 }: EditScheduleScreenViewPropsTypes) {
   const { handleGetRequest, handleUpdateRequest } = useHttp()
   const [isLoading, setIsLoading] = useState(false)
-  const [toko, setToko] = useState<ITokoModel[]>([])
+  const [stores, setStores] = useState<IStoreModel[]>([])
   const [schedule, setSchedule] = useState({
     scheduleName: '',
     scheduleDescription: '',
-    scheduleTokoId: 0,
+    scheduleStoreId: 0,
     scheduleStartDate: '',
-    scheduleEndDate: ''
+    scheduleEndDate: '',
+    scheduleStatus: 'waiting'
   })
 
   const handleCreateTask = async () => {
@@ -50,19 +48,13 @@ export default function EditScheduleScreenView({
       alert('Invalid Date. Start date cannot be after end date.')
       return
     } else {
-      const payload: IJadwalUpdateRequestModel = {
-        jadwalId: route.params.id,
-        jadwalName: schedule.scheduleName,
-        jadwalDescription: schedule.scheduleDescription,
-        jadwalTokoId: schedule.scheduleTokoId,
-        jadwalUserId: 1,
-        jadwalStartDate: schedule.scheduleStartDate,
-        jadwalEndDate: schedule.scheduleEndDate,
-        jadwalStatus: 'waiting'
+      const payload: IScheduleUpdateRequestModel = {
+        scheduleId: route.params.id,
+        ...schedule
       }
       try {
         await handleUpdateRequest({
-          path: '/jadwal',
+          path: '/schedules',
           body: payload
         })
         navigation.goBack()
@@ -112,15 +104,14 @@ export default function EditScheduleScreenView({
     })
   }
 
-  const getToko = async () => {
+  const getStores = async () => {
     try {
       setIsLoading(true)
       const result = await handleGetRequest({
-        path: '/toko'
+        path: '/stores'
       })
       if (result) {
-        setToko(result.items)
-        console.log(result)
+        setStores(result.items)
       }
     } catch (error: any) {
       console.log(error)
@@ -133,17 +124,10 @@ export default function EditScheduleScreenView({
     try {
       setIsLoading(true)
       const result = await handleGetRequest({
-        path: '/jadwal/detail/' + route.params.id
+        path: '/schedules/detail/' + route.params.id
       })
       if (result) {
-        // setSchedule(result.items)
-        setSchedule({
-          scheduleName: result.jadwalName,
-          scheduleDescription: result.jadwalDescription,
-          scheduleTokoId: result.jadwalTokoId,
-          scheduleStartDate: '',
-          scheduleEndDate: ''
-        })
+        setSchedule(result)
       }
     } catch (error: any) {
       console.log(error)
@@ -153,7 +137,7 @@ export default function EditScheduleScreenView({
   }
 
   useEffect(() => {
-    getToko()
+    getStores()
     getSchedule()
   }, [])
 
@@ -178,23 +162,23 @@ export default function EditScheduleScreenView({
         <FormControl>
           <FormControl.Label>Toko</FormControl.Label>
           <Select
-            selectedValue={schedule.scheduleTokoId.toString()}
+            selectedValue={schedule.scheduleStoreId.toString()}
             minWidth='200'
             accessibilityLabel='Choose toko'
             placeholder='Choose toko'
             onValueChange={(itemValue) =>
-              setSchedule({ ...schedule, scheduleTokoId: Number(itemValue) })
+              setSchedule({ ...schedule, scheduleStoreId: Number(itemValue) })
             }
             _selectedItem={{
               bg: 'blue.200',
               endIcon: <CheckIcon size='5' />
             }}
           >
-            {toko.map((item) => (
+            {stores.map((item) => (
               <Select.Item
                 key={item.id}
-                label={item.tokoName}
-                value={item.tokoId.toString()}
+                label={item.storeName}
+                value={item.storeId.toString()}
               />
             ))}
           </Select>

@@ -8,18 +8,16 @@ import {
   Divider,
   Icon,
   IconButton,
-  Modal,
-  FormControl,
-  Input
+  Modal
 } from 'native-base'
 import { Ionicons } from '@expo/vector-icons'
 import Layout from '../../components/Layout'
 import { INavigationParamList } from '../../models/navigationModel'
 import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { useHttp } from '../../hooks/useHttp'
-import { IJadwalModel } from '../../models/jadwalModel'
 import { convertISOToRegular } from '../../utilities/convertTime'
 import { RefreshControl } from 'react-native'
+import { IScheduleModel } from '../../models/scheduleModel'
 
 type ListScheduleScreenViewPropsTypes = NativeStackScreenProps<
   INavigationParamList,
@@ -33,14 +31,14 @@ export default function ListScheduleScreenView({
   const [isLoading, setIsLoading] = useState(false)
   const [pageSize, setpageSize] = useState(0)
   const [showModalDelet, setShowModalDelete] = useState(false)
-  const [modalDeleteData, setModalDeleteData] = useState<IJadwalModel>()
-  const [jadwal, setJadwal] = useState<IJadwalModel[]>([])
+  const [modalDeleteData, setModalDeleteData] = useState<IScheduleModel>()
+  const [jadwal, setJadwal] = useState<IScheduleModel[]>([])
 
   const getSchedules = async () => {
     try {
       setIsLoading(true)
       const result = await handleGetTableDataRequest({
-        path: '/jadwal',
+        path: '/schedules',
         page: pageSize,
         size: 10,
         filter: {}
@@ -48,8 +46,6 @@ export default function ListScheduleScreenView({
       if (result) {
         setJadwal(result.items)
       }
-
-      console.log(result.items)
     } catch (error: any) {
       console.log(error)
     } finally {
@@ -74,7 +70,7 @@ export default function ListScheduleScreenView({
     setIsLoading(true)
     try {
       await handleRemoveRequest({
-        path: '/jadwal/' + modalDeleteData?.jadwalId
+        path: '/schedules/' + modalDeleteData?.scheduleId
       })
     } catch (error: any) {
       console.log(error)
@@ -117,13 +113,13 @@ export default function ListScheduleScreenView({
               px={4}
             >
               <VStack flex={1}>
-                <Text fontWeight='bold'>{item.jadwalName}</Text>
+                <Text fontWeight='bold'>{item.scheduleName}</Text>
                 <Text fontSize='sm' color='gray.400'>
-                  {item.jadwalDescription}
+                  {item.scheduleDescription}
                 </Text>
                 <Text fontSize='sm' color='gray.400'>
-                  Start: {convertISOToRegular(item.jadwalStartDate)} | End:
-                  {convertISOToRegular(item.jadwalEndDate)}
+                  Start: {convertISOToRegular(item.scheduleStartDate)} | End:
+                  {convertISOToRegular(item.scheduleEndDate)}
                 </Text>
               </VStack>
               <HStack space={2}>
@@ -136,7 +132,7 @@ export default function ListScheduleScreenView({
                       color='blue.500'
                     />
                   }
-                  onPress={() => handleEdit(item.jadwalId)}
+                  onPress={() => handleEdit(item.scheduleId)}
                   _pressed={{ bg: 'blue.100' }}
                 />
                 <IconButton
@@ -154,7 +150,7 @@ export default function ListScheduleScreenView({
             <Divider />
           </VStack>
         )}
-        keyExtractor={(item) => item.jadwalId.toString()}
+        keyExtractor={(item) => item.scheduleId.toString()}
       />
       <Modal isOpen={showModalDelet} onClose={() => setShowModalDelete(false)}>
         <Modal.Content maxWidth='400px'>

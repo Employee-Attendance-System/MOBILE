@@ -1,5 +1,5 @@
 import { IRootModel } from './rootModel'
-import { ITokoModel } from './tokoModel'
+import { IStoreModel } from './storeModel'
 
 export interface IJadwalModel extends IRootModel {
   jadwalId: number
@@ -10,7 +10,7 @@ export interface IJadwalModel extends IRootModel {
   jadwalStartDate: string
   jadwalEndDate: string
   jadwalStatus: 'waiting' | 'checkin' | 'checkout' | string
-  toko: ITokoModel
+  toko: IStoreModel
 }
 
 export interface IJadwalUpdateRequestModel {

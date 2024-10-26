@@ -18,8 +18,8 @@ import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
 import moment from 'moment'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useHttp } from '../../hooks/useHttp'
-import { ITokoModel } from '../../models/tokoModel'
-import { IJadwalCreateRequestModel } from '../../models/jadwalModel'
+import { IStoreModel } from '../../models/storeModel'
+import { IScheduleCreateRequestModel } from '../../models/scheduleModel'
 
 type CreateScheduleScreenViewPropsTypes = NativeStackScreenProps<
   INavigationParamList,
@@ -31,33 +31,25 @@ export default function CreateScheduleScreenView({
 }: CreateScheduleScreenViewPropsTypes) {
   const { handleGetRequest, handlePostRequest } = useHttp()
   const [isLoading, setIsLoading] = useState(false)
-  const [toko, setToko] = useState<ITokoModel[]>([])
+  const [toko, setToko] = useState<IStoreModel[]>([])
   const [schedule, setSchedule] = useState({
     scheduleName: '',
     scheduleDescription: '',
-    scheduleTokoId: 0,
+    scheduleStoreId: 0,
     scheduleStartDate: '',
-    scheduleEndDate: ''
+    scheduleEndDate: '',
+    scheduleStatus: 'waiting'
   })
 
   const handleCreateTask = async () => {
-    console.log(schedule)
     if (moment(schedule.scheduleStartDate).isAfter(moment(schedule.scheduleEndDate))) {
       alert('Invalid Date. Start date cannot be after end date.')
       return
     } else {
-      const payload: IJadwalCreateRequestModel = {
-        jadwalName: schedule.scheduleName,
-        jadwalDescription: schedule.scheduleDescription,
-        jadwalTokoId: schedule.scheduleTokoId,
-        jadwalUserId: 1,
-        jadwalStartDate: schedule.scheduleStartDate,
-        jadwalEndDate: schedule.scheduleEndDate,
-        jadwalStatus: 'waiting'
-      }
+      const payload: IScheduleCreateRequestModel = schedule
       try {
         const result = await handlePostRequest({
-          path: '/jadwal',
+          path: '/schedules',
           body: payload
         })
         navigation.goBack()
@@ -149,12 +141,12 @@ export default function CreateScheduleScreenView({
         <FormControl>
           <FormControl.Label>Toko</FormControl.Label>
           <Select
-            selectedValue={schedule.scheduleTokoId.toString()}
+            selectedValue={schedule.scheduleStoreId.toString()}
             minWidth='200'
             accessibilityLabel='Choose toko'
             placeholder='Choose toko'
             onValueChange={(itemValue) =>
-              setSchedule({ ...schedule, scheduleTokoId: Number(itemValue) })
+              setSchedule({ ...schedule, scheduleStoreId: Number(itemValue) })
             }
             _selectedItem={{
               bg: 'blue.200',
@@ -164,8 +156,8 @@ export default function CreateScheduleScreenView({
             {toko.map((item) => (
               <Select.Item
                 key={item.id}
-                label={item.tokoName}
-                value={item.tokoId.toString()}
+                label={item.storeName}
+                value={item.storeId.toString()}
               />
             ))}
           </Select>
