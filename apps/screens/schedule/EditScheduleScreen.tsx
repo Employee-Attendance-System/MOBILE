@@ -43,8 +43,6 @@ export default function EditScheduleScreenView({
   });
 
   const handleUpdateTask = async () => {
-    console.log(schedule);
-    console.log("__sdsdsd");
     if (
       moment(schedule.scheduleStartDate).isAfter(
         moment(schedule.scheduleEndDate)
@@ -55,7 +53,12 @@ export default function EditScheduleScreenView({
     } else {
       const payload: IScheduleUpdateRequestModel = {
         scheduleId: route.params.id,
-        ...schedule,
+        scheduleName: schedule.scheduleName,
+        scheduleDescription: schedule.scheduleDescription,
+        scheduleStoreId: schedule.scheduleStoreId,
+        scheduleStartDate: schedule.scheduleStartDate,
+        scheduleEndDate: schedule.scheduleEndDate,
+        scheduleStatus: schedule.scheduleStatus,
       };
       try {
         await handleUpdateRequest({
@@ -132,7 +135,13 @@ export default function EditScheduleScreenView({
         path: "/schedules/detail/" + route.params.id,
       });
       if (result) {
-        setSchedule(result);
+        const scheduleStartDate = moment(result.scheduleStartDate).format(
+          "YYYY-MM-DD HH:mm"
+        );
+        const scheduleEndDate = moment(result.scheduleEndDate).format(
+          "YYYY-MM-DD HH:mm"
+        );
+        setSchedule({ ...result, scheduleStartDate, scheduleEndDate });
       }
     } catch (error: any) {
       console.log(error);

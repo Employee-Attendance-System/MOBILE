@@ -78,7 +78,7 @@ export default function ProfileScreenView({
                 <Ionicons name="calendar-outline" size={16} color="gray" />
                 <Text fontSize="sm" color="gray.500" ml={1}>
                   Joined{" "}
-                  {convertISOToRegular(detailProfile?.createdAt) || "N/A"}
+                  {convertISOToRegular(detailProfile?.createdAt + "") || "N/A"}
                 </Text>
               </HStack>
             </HStack>
@@ -92,13 +92,15 @@ export default function ProfileScreenView({
             <ProfileOption
               icon="person-outline"
               label="Edit Profile"
-              onPress={() => navigation.navigate("EditProfile")}
+              // onPress={() => navigation.navigate("EditProfile")}
+              onPress={() => {}}
             />
 
             <ProfileOption
               icon="help-circle-outline"
               label="Help Center"
-              onPress={() => navigation.navigate("Help")}
+              // onPress={() => navigation.navigate("Help")}
+              onPress={() => {}}
             />
           </VStack>
 

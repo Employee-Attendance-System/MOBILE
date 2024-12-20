@@ -1,4 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   VStack,
@@ -11,17 +16,15 @@ import {
   IconButton,
   Input,
   Modal,
-  Box,
 } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import Layout from "../../components/Layout";
 import { INavigationParamList } from "../../models/navigationModel";
 import { RefreshControl } from "react-native";
 import { IScheduleModel } from "../../models/scheduleModel";
-import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { useHttp } from "../../hooks/useHttp";
 import { convertISOToRegular } from "../../utilities/convertTime";
-import moment from "moment";
+import { useFocusEffect } from "@react-navigation/native";
 
 type ListScheduleScreenViewPropsTypes = NativeStackScreenProps<
   INavigationParamList,
@@ -33,21 +36,16 @@ export default function ListScheduleScreenView({
 }: ListScheduleScreenViewPropsTypes) {
   const { handleGetTableDataRequest, handleRemoveRequest } = useHttp();
   const [isLoading, setIsLoading] = useState(false);
-  const [jadwal, setJadwal] = useState<IScheduleModel[]>([]);
+  const [schedule, setSchedule] = useState<IScheduleModel[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [modalDeleteData, setModalDeleteData] = useState<IScheduleModel>();
 
-  // Fetch Schedules
   const getSchedules = async () => {
     try {
       setIsLoading(true);
       const filter: any = {};
 
-      if (startDate) filter.startDate = startDate.toISOString();
-      if (endDate) filter.endDate = endDate.toISOString();
       if (searchTerm) filter.search = searchTerm;
 
       const result = await handleGetTableDataRequest({
@@ -58,7 +56,7 @@ export default function ListScheduleScreenView({
       });
 
       if (result) {
-        setJadwal(result.items);
+        setSchedule(result.items);
       }
     } catch (error: any) {
       console.log(error);
@@ -69,13 +67,13 @@ export default function ListScheduleScreenView({
 
   useEffect(() => {
     getSchedules();
-  }, [searchTerm, startDate, endDate]);
+  }, [searchTerm]);
 
   const onRefresh = useCallback(async () => {
     await getSchedules();
-  }, [startDate, endDate, searchTerm]);
+  }, [searchTerm]);
 
-  const handleDeleteJadwalItem = async () => {
+  const handleDeletescheduleItem = async () => {
     setIsLoading(true);
     try {
       await handleRemoveRequest({
@@ -90,22 +88,26 @@ export default function ListScheduleScreenView({
     }
   };
 
-  const showDatePicker = (type: "start" | "end") => {
-    DateTimePickerAndroid.open({
-      value: new Date(),
-      mode: "date",
-      is24Hour: true,
-      onChange: (event, selectedDate) => {
-        const currentDate = selectedDate || new Date();
-        const formattedDate = moment(currentDate).format("YYYY-MM-DD");
-        if (type === "start") {
-          setStartDate(new Date(formattedDate));
-        } else {
-          setEndDate(new Date(formattedDate));
-        }
-      },
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <HStack marginRight={5}>
+          <Button
+            variant={"outline"}
+            onPress={() => navigation.navigate("CreateSchedule")}
+          >
+            Create
+          </Button>
+        </HStack>
+      ),
     });
-  };
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      getSchedules();
+    }, [])
+  );
 
   return (
     <Layout>
@@ -130,44 +132,6 @@ export default function ListScheduleScreenView({
             />
           }
         />
-
-        {/* Date Filters */}
-        <HStack space={3} justifyContent="space-between">
-          <Box flex={1}>
-            <Text fontSize="sm" mb={1}>
-              Start Date
-            </Text>
-            <Button
-              onPress={() => showDatePicker("start")}
-              bg="blue.500"
-              _text={{ color: "white" }}
-              leftIcon={
-                <Icon as={Ionicons} name="calendar" size="sm" color="white" />
-              }
-            >
-              {startDate
-                ? moment(startDate).format("YYYY-MM-DD")
-                : "Pick Start Date"}
-            </Button>
-          </Box>
-
-          <Box flex={1}>
-            <Text fontSize="sm" mb={1}>
-              End Date
-            </Text>
-            <Button
-              onPress={() => showDatePicker("end")}
-              bg="blue.500"
-              _text={{ color: "white" }}
-              leftIcon={
-                <Icon as={Ionicons} name="calendar" size="sm" color="white" />
-              }
-              flex={1}
-            >
-              {endDate ? moment(endDate).format("YYYY-MM-DD") : "Pick End Date"}
-            </Button>
-          </Box>
-        </HStack>
       </VStack>
 
       {/* Schedule List */}
@@ -175,13 +139,13 @@ export default function ListScheduleScreenView({
         refreshControl={
           <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
         }
-        data={jadwal}
+        data={schedule}
         renderItem={({ item }) => (
           <VStack>
             <HStack
               justifyContent="space-between"
               py={2}
-              alignItems="center"
+              alignItems="flex-start"
               bg="white"
               rounded="md"
               px={4}
@@ -191,19 +155,25 @@ export default function ListScheduleScreenView({
                 <Text fontSize="sm" color="gray.400">
                   {item.scheduleDescription}
                 </Text>
+
                 <Text fontSize="sm" color="gray.400">
                   Start: {convertISOToRegular(item.scheduleStartDate)} | End:{" "}
                   {convertISOToRegular(item.scheduleEndDate)}
                 </Text>
+                <Text color={getStatusColor(item.scheduleStatus)}>
+                  {mapScheduleStatusName(item.scheduleStatus)}
+                </Text>
               </VStack>
               <HStack space={2}>
                 <IconButton
+                  disabled={item.scheduleStatus !== "waiting"}
                   icon={
                     <Icon
                       as={Ionicons}
                       name="create-outline"
                       size="lg"
                       color="blue.500"
+                      opacity={item.scheduleStatus !== "waiting" ? 0.3 : 1}
                     />
                   }
                   onPress={() =>
@@ -247,7 +217,7 @@ export default function ListScheduleScreenView({
               <Button variant="ghost" onPress={() => setShowModalDelete(false)}>
                 Cancel
               </Button>
-              <Button colorScheme="red" onPress={handleDeleteJadwalItem}>
+              <Button colorScheme="red" onPress={handleDeletescheduleItem}>
                 Delete
               </Button>
             </Button.Group>
@@ -257,3 +227,29 @@ export default function ListScheduleScreenView({
     </Layout>
   );
 }
+
+const mapScheduleStatusName = (status: string) => {
+  switch (status) {
+    case "checkin":
+      return "Berlangsung";
+    case "checkout":
+      return "Selesai";
+    case "waiting":
+      return "Menunggu";
+    default:
+      return "unknown";
+  }
+};
+
+const getStatusColor = (status: string) => {
+  switch (status.toLowerCase()) {
+    case "checkin":
+      return "green.500";
+    case "checkout":
+      return "blue.500";
+    case "waiting":
+      return "yellow.500";
+    default:
+      return "gray.500";
+  }
+};

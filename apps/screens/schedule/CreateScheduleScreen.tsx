@@ -134,7 +134,7 @@ export default function CreateScheduleScreenView({
     <Layout>
       <VStack safeArea p={5} space={6} bg="gray.50" flex={1}>
         <FormControl>
-          <FormControl.Label>Nama Jadwal</FormControl.Label>
+          <FormControl.Label>Nama Jadwald</FormControl.Label>
           <Input
             placeholder="Enter schedule name"
             value={schedule.scheduleName}
