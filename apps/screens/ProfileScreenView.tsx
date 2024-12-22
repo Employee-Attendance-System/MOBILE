@@ -31,6 +31,7 @@ type ProfileScreenViewPropsTypes = NativeStackScreenProps<
 export default function ProfileScreenView({
   navigation,
 }: ProfileScreenViewPropsTypes) {
+  const { setAppAlert } = useAppContext();
   const [openModal, setOpenModal] = useState(false);
   const { init, setInit } = useAppContext();
   const { removeToken } = useAuthToken();
@@ -113,6 +114,23 @@ export default function ProfileScreenView({
               _text={{ fontWeight: "bold", fontSize: "md" }}
             >
               Sign Out
+            </Button>
+          </Box>
+
+          <Box mt={8} px={4}>
+            <Button
+              onPress={() =>
+                setAppAlert({
+                  isDisplayAlert: false,
+                  message: "helo",
+                  alertType: "success",
+                })
+              }
+              colorScheme="blue"
+              rounded="lg"
+              _text={{ fontWeight: "bold", fontSize: "md" }}
+            >
+              alert
             </Button>
           </Box>
 

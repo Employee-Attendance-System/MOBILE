@@ -85,6 +85,7 @@ export default function AttendanceScreenView({
   return (
     <Layout>
       <FlatList
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
         }
@@ -96,16 +97,16 @@ export default function AttendanceScreenView({
               onPress={() =>
                 navigation.navigate("DetailAttendance", {
                   attendanceId: item.scheduleId,
+                  store: item.store,
                 })
               }
             >
               <HStack
                 justifyContent="space-between"
-                py={4}
+                pb={5}
                 alignItems="center"
                 bg="white"
                 rounded="md"
-                px={4}
                 opacity={item.scheduleStatus === "checkout" ? 0.5 : 1}
               >
                 <VStack flex={1}>

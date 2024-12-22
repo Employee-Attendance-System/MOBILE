@@ -24,13 +24,23 @@ export default function DetailAttendanceScreenView({
   const [loading, setLoading] = useState(false);
   const [withinRange, setWithinRange] = useState(false);
   const attendanceId = route.params.attendanceId;
+  const store = route.params.store;
 
-  const OFFICE_LOCATION = {
-    latitude: -5.3137477,
-    longitude: 105.3494032,
-  };
+  // const OFFICE_LOCATION = {
+  //   latitude: -5.3137477,
+  //   longitude: 105.3494032,
+  // };
 
   const MAX_DISTANCE = 100;
+
+  const OFFICE_LOCATION = {
+    latitude: parseInt(store.storeLatitude),
+    longitude: parseInt(store.storeLongitude),
+  };
+
+  console.log(OFFICE_LOCATION);
+
+  console.log(store);
 
   const calculateDistance = (
     lat1: number,

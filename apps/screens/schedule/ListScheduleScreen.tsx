@@ -111,8 +111,7 @@ export default function ListScheduleScreenView({
 
   return (
     <Layout>
-      {/* Search Bar and Filters */}
-      <VStack space={4} p={4} bg="white" mb={2} rounded="md">
+      <VStack space={4} mb={2} rounded="md">
         <Input
           placeholder="Search Schedules"
           value={searchTerm}
@@ -136,6 +135,7 @@ export default function ListScheduleScreenView({
 
       {/* Schedule List */}
       <FlatList
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
         }
@@ -144,11 +144,10 @@ export default function ListScheduleScreenView({
           <VStack>
             <HStack
               justifyContent="space-between"
-              py={2}
               alignItems="flex-start"
               bg="white"
               rounded="md"
-              px={4}
+              pb={5}
             >
               <VStack flex={1}>
                 <Text fontWeight="bold">{item.scheduleName}</Text>

@@ -87,7 +87,7 @@ export default function HomeScreenView({
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <VStack safeArea p={5} space={6} bg="white" flex={1}>
+      <Layout>
         {/* Greeting Section */}
         <VStack space={2}>
           <HStack space={2}>
@@ -120,14 +120,14 @@ export default function HomeScreenView({
             label="History"
             count={12}
             color="orange"
-            onPress={() => navigation.navigate("Schedule")}
+            onPress={() => navigation.navigate("ScheduleHistory")}
           />
         </HStack>
 
         {/* Recent Requests */}
         <VStack space={4}>
-          <Text fontSize="lg" fontWeight="bold">
-            Jadwal Kerja Terbaru
+          <Text fontSize="lg" fontWeight="bold" py={2}>
+            Absensi Terbaru
           </Text>
           <FlatList
             refreshControl={
@@ -141,6 +141,7 @@ export default function HomeScreenView({
                   onPress={() =>
                     navigation.navigate("DetailAttendance", {
                       attendanceId: item.scheduleId,
+                      store: item.store,
                     })
                   }
                 >
@@ -187,7 +188,7 @@ export default function HomeScreenView({
             keyExtractor={(item) => item.scheduleId.toString()}
           />
         </VStack>
-      </VStack>
+      </Layout>
     </ScrollView>
   );
 }
@@ -198,6 +199,7 @@ import { IScheduleModel } from "../models/scheduleModel";
 import { useHttp } from "../hooks/useHttp";
 import { useFocusEffect } from "@react-navigation/native";
 import { convertISOToRegular } from "../utilities/convertTime";
+import Layout from "../components/Layout";
 
 interface CardProps {
   icon: string;
