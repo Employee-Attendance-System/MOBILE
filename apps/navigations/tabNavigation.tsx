@@ -1,15 +1,15 @@
-import React from 'react'
-import { Feather, AntDesign, Ionicons } from '@expo/vector-icons'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import HomeScreenView from '../screens/HomeScreenView'
-import { heightPercentage } from '../utilities/dimension'
-import ProfileScreenView from '../screens/ProfileScreenView'
-import { INavigationParamList } from '../models/navigationModel'
-import { appConfig } from '../configs'
-import ListJadwalScreenView from '../screens/schedule/ListScheduleScreen'
-import AttendanceScreenView from '../screens/attendance/ListAttendanceScreenView'
+import React from "react";
+import { Feather, AntDesign, Ionicons } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import HomeScreenView from "../screens/HomeScreenView";
+import { heightPercentage } from "../utilities/dimension";
+import ProfileScreenView from "../screens/ProfileScreenView";
+import { INavigationParamList } from "../models/navigationModel";
+import { appConfig } from "../configs";
+import ListJadwalScreenView from "../screens/schedule/ListScheduleScreen";
+import AttendanceScreenView from "../screens/attendance/ListAttendanceScreenView";
 
-const Tab = createBottomTabNavigator<INavigationParamList>()
+const Tab = createBottomTabNavigator<INavigationParamList>();
 
 export function TabNavigation() {
   return (
@@ -17,36 +17,40 @@ export function TabNavigation() {
       screenOptions={({ route }) => ({
         tabBarStyle: { minHeight: heightPercentage(7) },
         headerTitleStyle: {
-          fontFamily: 'lato',
-          color: appConfig.colors.primary
+          fontFamily: "lato",
+          color: appConfig.colors.primary,
         },
         tabBarIcon: ({ color }) => {
           switch (route.name) {
-            case 'Home':
-              return <Feather name='home' size={20} color={color} />
-            case 'Attendance':
-              return <Ionicons name='list' size={20} color={color} />
-            case 'Schedule':
-              return <Ionicons name='calendar' size={20} color={color} />
-            case 'Profile':
-              return <AntDesign name='user' size={20} color={color} />
+            case "Home":
+              return <Feather name="home" size={20} color={color} />;
+            case "Attendance":
+              return <Ionicons name="list" size={20} color={color} />;
+            case "Schedule":
+              return <Ionicons name="calendar" size={20} color={color} />;
+            case "Profile":
+              return <AntDesign name="user" size={20} color={color} />;
             default:
-              break
+              break;
           }
         },
         tabBarActiveTintColor: appConfig.colors.primary,
-        tabBarInactiveTintColor: appConfig.colors.gray
+        tabBarInactiveTintColor: appConfig.colors.gray,
       })}
     >
-      <Tab.Screen name='Home' component={HomeScreenView} />
-      <Tab.Screen name='Attendance' component={AttendanceScreenView} />
-
-      <Tab.Screen name='Schedule' component={ListJadwalScreenView} />
       <Tab.Screen
-        name='Profile'
-        options={{ tabBarLabel: 'My Profile' }}
+        name="Home"
+        options={{ tabBarLabel: "Home" }}
+        component={HomeScreenView}
+      />
+      <Tab.Screen name="Attendance" component={AttendanceScreenView} />
+
+      <Tab.Screen name="Schedule" component={ListJadwalScreenView} />
+      <Tab.Screen
+        name="Profile"
+        options={{ tabBarLabel: "My Profile" }}
         component={ProfileScreenView}
       />
     </Tab.Navigator>
-  )
+  );
 }

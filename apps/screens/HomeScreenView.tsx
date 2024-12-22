@@ -27,9 +27,10 @@ export default function HomeScreenView({
   navigation,
 }: HomeScreenViewPropsTypes) {
   const [attendance, setAttendance] = useState<IScheduleModel[]>([]);
-  const { handleGetTableDataRequest } = useHttp();
+  const { handleGetTableDataRequest, handleGetRequest } = useHttp();
   const [isLoading, setIsLoading] = useState(false);
   const [pageSize, setpageSize] = useState(0);
+  const [detailUser, setDetailUser] = useState<IUserModel>();
 
   const getAttendance = async () => {
     try {
@@ -52,20 +53,8 @@ export default function HomeScreenView({
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "checkin":
-        return "green.500";
-      case "checkout":
-        return "red.500";
-      case "waiting":
-        return "yellow.500";
-      default:
-        return "gray.500";
-    }
-  };
-
   const onRefresh = useCallback(async () => {
+    await getMyProfile();
     await getAttendance();
   }, []);
 
@@ -75,7 +64,13 @@ export default function HomeScreenView({
     }, [])
   );
 
+  const getMyProfile = async () => {
+    const result = await handleGetRequest({ path: "/my-profile" });
+    setDetailUser(result);
+  };
+
   useEffect(() => {
+    getMyProfile();
     getAttendance();
   }, []);
 
@@ -89,15 +84,21 @@ export default function HomeScreenView({
     <ScrollView showsVerticalScrollIndicator={false}>
       <Layout>
         {/* Greeting Section */}
-        <VStack space={2}>
+        <VStack space={2} pt={8}>
           <HStack space={2}>
-            <Avatar>s</Avatar>
-            <Text fontSize="2xl" fontWeight="bold">
-              Good Morning, Jhon
+            <Avatar
+              source={{
+                uri: "https://vasundharaodisha.org/upload/84552no-user.jpg",
+              }}
+              borderColor="white"
+              borderWidth={3}
+            />
+            <Text fontSize="xl" fontWeight="bold">
+              Good {getPeriodOfDay()}, {detailUser?.userName}
             </Text>
           </HStack>
         </VStack>
-        <Text fontSize="lg" fontWeight="bold">
+        <Text fontSize="lg" fontWeight="bold" mt={5}>
           Pilih Aktivitas
         </Text>
         <HStack space={3} mt={5} justifyContent="space-between">
@@ -126,8 +127,8 @@ export default function HomeScreenView({
 
         {/* Recent Requests */}
         <VStack space={4}>
-          <Text fontSize="lg" fontWeight="bold" py={2}>
-            Absensi Terbaru
+          <Text fontSize="lg" fontWeight="bold" py={5}>
+            Deadline Absensi Terbaru
           </Text>
           <FlatList
             refreshControl={
@@ -186,6 +187,16 @@ export default function HomeScreenView({
               </VStack>
             )}
             keyExtractor={(item) => item.scheduleId.toString()}
+            ListEmptyComponent={
+              <VStack alignItems="center" justifyContent="center" my={10}>
+                <Text fontSize="lg" color="gray.500" fontWeight="bold">
+                  No attendance data available.
+                </Text>
+                <Text fontSize="sm" color="gray.400">
+                  Pull down to refresh or create schedule.
+                </Text>
+              </VStack>
+            }
           />
         </VStack>
       </Layout>
@@ -200,6 +211,7 @@ import { useHttp } from "../hooks/useHttp";
 import { useFocusEffect } from "@react-navigation/native";
 import { convertISOToRegular } from "../utilities/convertTime";
 import Layout from "../components/Layout";
+import { IUserModel } from "../models/userModel";
 
 interface CardProps {
   icon: string;
@@ -241,4 +253,31 @@ const Card = ({ icon, label, count, color, onPress }: CardProps) => {
       </TouchableOpacity>
     </Box>
   );
+};
+
+const getPeriodOfDay = () => {
+  const hours = new Date().getHours();
+
+  if (hours >= 5 && hours < 12) {
+    return "Morning";
+  } else if (hours >= 12 && hours < 17) {
+    return "Afternoon";
+  } else if (hours >= 17 && hours < 21) {
+    return "Evening";
+  } else {
+    return "Night";
+  }
+};
+
+const getStatusColor = (status: string) => {
+  switch (status.toLowerCase()) {
+    case "checkin":
+      return "green.500";
+    case "checkout":
+      return "red.500";
+    case "waiting":
+      return "yellow.500";
+    default:
+      return "gray.500";
+  }
 };

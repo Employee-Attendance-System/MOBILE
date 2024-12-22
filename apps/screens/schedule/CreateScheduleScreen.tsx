@@ -132,140 +132,139 @@ export default function CreateScheduleScreenView({
 
   return (
     <Layout>
-      <VStack safeArea p={5} space={6} bg="gray.50" flex={1}>
-        <FormControl>
-          <FormControl.Label>Nama Jadwald</FormControl.Label>
-          <Input
-            placeholder="Enter schedule name"
-            value={schedule.scheduleName}
-            onChangeText={(text) =>
-              setSchedule({ ...schedule, scheduleName: text })
-            }
-          />
-        </FormControl>
+      <FormControl mt={5}>
+        <FormControl.Label>Nama Jadwal</FormControl.Label>
+        <Input
+          placeholder="Enter schedule name"
+          value={schedule.scheduleName}
+          onChangeText={(text) =>
+            setSchedule({ ...schedule, scheduleName: text })
+          }
+        />
+      </FormControl>
 
-        <FormControl>
-          <FormControl.Label>Toko</FormControl.Label>
-          <Select
-            selectedValue={schedule.scheduleStoreId.toString()}
-            minWidth="200"
-            accessibilityLabel="Choose toko"
-            placeholder="Choose toko"
-            onValueChange={(itemValue) =>
-              setSchedule({ ...schedule, scheduleStoreId: Number(itemValue) })
-            }
-            _selectedItem={{
-              bg: "blue.200",
-              endIcon: <CheckIcon size="5" />,
-            }}
-          >
-            {toko.map((item) => (
-              <Select.Item
-                key={item.id}
-                label={item.storeName}
-                value={item.storeId.toString()}
-              />
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl>
-          <FormControl.Label>Deskripsi</FormControl.Label>
-          <TextArea
-            placeholder="Enter description"
-            value={schedule.scheduleDescription}
-            onChangeText={(text) =>
-              setSchedule({ ...schedule, scheduleDescription: text })
-            }
-            h={20}
-            autoCompleteType={undefined}
-          />
-        </FormControl>
-
-        {/* Start Date Picker */}
-        <FormControl>
-          <FormControl.Label>Tanggal Mulai</FormControl.Label>
-          <HStack space={2}>
-            <Button
-              onPress={() => showDatePicker("start")}
-              bg="blue.500"
-              _text={{ color: "white" }}
-              leftIcon={
-                <Icon as={MaterialIcons} name="event" size="sm" color="white" />
-              }
-              flex={1}
-            >
-              {schedule.scheduleStartDate
-                ? schedule.scheduleStartDate.split(" ")[0]
-                : "Pilih Tanggal Mulai"}
-            </Button>
-            <Button
-              onPress={() => showTimePicker("start")}
-              bg="blue.500"
-              _text={{ color: "white" }}
-              leftIcon={
-                <Icon
-                  as={MaterialIcons}
-                  name="access-time"
-                  size="sm"
-                  color="white"
-                />
-              }
-              flex={1}
-            >
-              {schedule.scheduleStartDate.includes(" ")
-                ? schedule.scheduleStartDate.split(" ")[1]
-                : "Pilih Jam Mulai"}
-            </Button>
-          </HStack>
-        </FormControl>
-
-        {/* End Date Picker */}
-        <FormControl>
-          <FormControl.Label>Tanggal Selesai</FormControl.Label>
-          <HStack space={2}>
-            <Button
-              onPress={() => showDatePicker("end")}
-              bg="blue.500"
-              _text={{ color: "white" }}
-              leftIcon={
-                <Icon as={MaterialIcons} name="event" size="sm" color="white" />
-              }
-              flex={1}
-            >
-              {schedule.scheduleEndDate
-                ? schedule.scheduleEndDate.split(" ")[0]
-                : "Pilih Tanggal Selesai"}
-            </Button>
-            <Button
-              onPress={() => showTimePicker("end")}
-              bg="blue.500"
-              _text={{ color: "white" }}
-              leftIcon={
-                <Icon
-                  as={MaterialIcons}
-                  name="access-time"
-                  size="sm"
-                  color="white"
-                />
-              }
-              flex={1}
-            >
-              {schedule.scheduleEndDate.includes(" ")
-                ? schedule.scheduleEndDate.split(" ")[1]
-                : "Pilih Jam Selesai"}
-            </Button>
-          </HStack>
-        </FormControl>
-
-        <Button
-          onPress={handleCreateTask}
-          bg="blue.500"
-          _text={{ color: "white" }}
+      <FormControl>
+        <FormControl.Label>Toko</FormControl.Label>
+        <Select
+          selectedValue={schedule.scheduleStoreId.toString()}
+          minWidth="200"
+          accessibilityLabel="Choose toko"
+          placeholder="Choose toko"
+          onValueChange={(itemValue) =>
+            setSchedule({ ...schedule, scheduleStoreId: Number(itemValue) })
+          }
+          _selectedItem={{
+            bg: "blue.200",
+            endIcon: <CheckIcon size="5" />,
+          }}
         >
-          Simpan
-        </Button>
-      </VStack>
+          {toko.map((item) => (
+            <Select.Item
+              key={item.id}
+              label={item.storeName}
+              value={item.storeId.toString()}
+            />
+          ))}
+        </Select>
+      </FormControl>
+
+      <FormControl>
+        <FormControl.Label>Deskripsi</FormControl.Label>
+        <TextArea
+          placeholder="Enter description"
+          value={schedule.scheduleDescription}
+          onChangeText={(text) =>
+            setSchedule({ ...schedule, scheduleDescription: text })
+          }
+          h={20}
+          autoCompleteType={undefined}
+        />
+      </FormControl>
+
+      {/* Start Date Picker */}
+      <FormControl>
+        <FormControl.Label>Tanggal Mulai</FormControl.Label>
+        <HStack space={2}>
+          <Button
+            onPress={() => showDatePicker("start")}
+            bg="blue.500"
+            _text={{ color: "white" }}
+            leftIcon={
+              <Icon as={MaterialIcons} name="event" size="sm" color="white" />
+            }
+            flex={1}
+          >
+            {schedule.scheduleStartDate
+              ? schedule.scheduleStartDate.split(" ")[0]
+              : "Pilih Tanggal Mulai"}
+          </Button>
+          <Button
+            onPress={() => showTimePicker("start")}
+            bg="blue.500"
+            _text={{ color: "white" }}
+            leftIcon={
+              <Icon
+                as={MaterialIcons}
+                name="access-time"
+                size="sm"
+                color="white"
+              />
+            }
+            flex={1}
+          >
+            {schedule.scheduleStartDate.includes(" ")
+              ? schedule.scheduleStartDate.split(" ")[1]
+              : "Pilih Jam Mulai"}
+          </Button>
+        </HStack>
+      </FormControl>
+
+      {/* End Date Picker */}
+      <FormControl>
+        <FormControl.Label>Tanggal Selesai</FormControl.Label>
+        <HStack space={2}>
+          <Button
+            onPress={() => showDatePicker("end")}
+            bg="blue.500"
+            _text={{ color: "white" }}
+            leftIcon={
+              <Icon as={MaterialIcons} name="event" size="sm" color="white" />
+            }
+            flex={1}
+          >
+            {schedule.scheduleEndDate
+              ? schedule.scheduleEndDate.split(" ")[0]
+              : "Pilih Tanggal Selesai"}
+          </Button>
+          <Button
+            onPress={() => showTimePicker("end")}
+            bg="blue.500"
+            _text={{ color: "white" }}
+            leftIcon={
+              <Icon
+                as={MaterialIcons}
+                name="access-time"
+                size="sm"
+                color="white"
+              />
+            }
+            flex={1}
+          >
+            {schedule.scheduleEndDate.includes(" ")
+              ? schedule.scheduleEndDate.split(" ")[1]
+              : "Pilih Jam Selesai"}
+          </Button>
+        </HStack>
+      </FormControl>
+
+      <Button
+        onPress={handleCreateTask}
+        bg="blue.500"
+        mt={5}
+        _text={{ color: "white" }}
+      >
+        Simpan
+      </Button>
     </Layout>
   );
 }

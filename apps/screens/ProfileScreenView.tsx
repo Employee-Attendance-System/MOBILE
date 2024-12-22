@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   Avatar,
@@ -22,6 +22,7 @@ import { IUserModel } from "../models/userModel";
 import { useHttp } from "../hooks/useHttp";
 import Layout from "../components/Layout";
 import { convertISOToRegular } from "../utilities/convertTime";
+import { useFocusEffect } from "@react-navigation/native";
 
 type ProfileScreenViewPropsTypes = NativeStackScreenProps<
   INavigationParamList,
@@ -52,6 +53,12 @@ export default function ProfileScreenView({
     getMyProfile();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      getMyProfile();
+    }, [])
+  );
+
   return (
     <Layout>
       <ScrollView>
@@ -69,11 +76,13 @@ export default function ProfileScreenView({
             </Box>
 
             <Text fontSize="2xl" fontWeight="bold">
-              {detailProfile?.userName || "Guest User"}
+              @{detailProfile?.userName || "Guest User"}
             </Text>
+
             <Text fontSize="sm" color="gray.500">
-              @{detailProfile?.userName || "guestuser"}
+              {detailProfile?.userContact || "_"}
             </Text>
+
             <HStack space={3} mt={1}>
               <HStack alignItems="center">
                 <Ionicons name="calendar-outline" size={16} color="gray" />
@@ -93,8 +102,9 @@ export default function ProfileScreenView({
             <ProfileOption
               icon="person-outline"
               label="Edit Profile"
-              // onPress={() => navigation.navigate("EditProfile")}
-              onPress={() => {}}
+              onPress={() =>
+                navigation.navigate("EditProfile", { user: detailProfile! })
+              }
             />
 
             <ProfileOption
@@ -114,23 +124,6 @@ export default function ProfileScreenView({
               _text={{ fontWeight: "bold", fontSize: "md" }}
             >
               Sign Out
-            </Button>
-          </Box>
-
-          <Box mt={8} px={4}>
-            <Button
-              onPress={() =>
-                setAppAlert({
-                  isDisplayAlert: false,
-                  message: "helo",
-                  alertType: "success",
-                })
-              }
-              colorScheme="blue"
-              rounded="lg"
-              _text={{ fontWeight: "bold", fontSize: "md" }}
-            >
-              alert
             </Button>
           </Box>
 

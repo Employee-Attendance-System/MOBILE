@@ -71,7 +71,7 @@ export default function ListScheduleHistoryScreenView({
   );
 
   return (
-    <Layout>
+    <Layout pt={8}>
       {/* Search Bar and Filters */}
       <VStack space={4} bg="white" mb={2} rounded="md">
         <Input
@@ -126,6 +126,16 @@ export default function ListScheduleHistoryScreenView({
           </VStack>
         )}
         keyExtractor={(item) => item.scheduleId.toString()}
+        ListEmptyComponent={
+          <VStack alignItems="center" justifyContent="center" mt={10} flex={1}>
+            <Text fontSize="lg" color="gray.500" fontWeight="bold">
+              No history data available.
+            </Text>
+            <Text fontSize="sm" color="gray.400">
+              Pull down to refresh or create attendance.
+            </Text>
+          </VStack>
+        }
       />
     </Layout>
   );

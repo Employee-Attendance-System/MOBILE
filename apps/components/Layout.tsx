@@ -1,4 +1,4 @@
-import { useToast, View } from "native-base";
+import { useToast, View, IBoxProps, Box } from "native-base";
 import React, { PropsWithChildren, useEffect } from "react";
 import { useAppContext } from "../context/app.context";
 import ToastAlert from "./toast";
@@ -13,7 +13,9 @@ type ToastAlertProps = {
   toast: ReturnType<typeof useToast>;
 };
 
-const Layout: React.FC<PropsWithChildren> = ({ children }) => {
+type LayoutProps = PropsWithChildren<IBoxProps>;
+
+const Layout: React.FC<LayoutProps> = ({ children, ...rest }) => {
   const { appAlert, setAppAlert } = useAppContext();
   const toast = useToast();
 
@@ -72,9 +74,9 @@ const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   }, [appAlert]);
 
   return (
-    <View flex={1} px={5} backgroundColor={"white"}>
+    <Box flex={1} px={5} backgroundColor={"white"} {...rest}>
       {children}
-    </View>
+    </Box>
   );
 };
 

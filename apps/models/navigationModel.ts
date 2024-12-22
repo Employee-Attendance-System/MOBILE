@@ -1,4 +1,5 @@
 import { IStoreModel } from "./storeModel";
+import { IUserModel } from "./userModel";
 
 export type INavigationParamList = {
   navigate(arg0: string): unknown;
@@ -14,4 +15,5 @@ export type INavigationParamList = {
   Attendance: undefined;
   DetailAttendance: { attendanceId: number; store: IStoreModel };
   ScheduleHistory: undefined;
+  EditProfile: { user: IUserModel };
 };

@@ -129,6 +129,16 @@ export default function AttendanceScreenView({
           </VStack>
         )}
         keyExtractor={(item) => item.scheduleId.toString()}
+        ListEmptyComponent={
+          <VStack alignItems="center" justifyContent="center" mt={10} flex={1}>
+            <Text fontSize="lg" color="gray.500" fontWeight="bold">
+              No attendance data available.
+            </Text>
+            <Text fontSize="sm" color="gray.400">
+              Pull down to refresh or create schedule.
+            </Text>
+          </VStack>
+        }
       />
     </Layout>
   );

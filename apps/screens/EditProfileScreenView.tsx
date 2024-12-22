@@ -13,7 +13,7 @@ import {
   VStack,
   WarningOutlineIcon,
 } from "native-base";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import { BASE_COLOR } from "../utilities/baseColor";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -21,18 +21,23 @@ import { INavigationParamList } from "../models/navigationModel";
 import { useHttp } from "../hooks/useHttp";
 import { appConfig } from "../configs";
 import useDeviceId from "../hooks/useDeviceId";
-import { IUserCreateRequestModel } from "../models/userModel";
+import {
+  IUserCreateRequestModel,
+  IUserUpdateRequestModel,
+} from "../models/userModel";
 
-type SignUpScreenViewPropsTypes = NativeStackScreenProps<
+type EditProfileScreenViewPropsTypes = NativeStackScreenProps<
   INavigationParamList,
-  "SignUp"
+  "EditProfile"
 >;
 
-export default function SignUpScreenView({
+export default function EditProfileScreenView({
   navigation,
-}: SignUpScreenViewPropsTypes) {
-  const { handlePostRequest } = useHttp();
+  route,
+}: EditProfileScreenViewPropsTypes) {
+  const { handleUpdateRequest } = useHttp();
   const deviceId = useDeviceId();
+  const detailUser = route.params.user;
 
   const [userName, setUserName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -66,49 +71,19 @@ export default function SignUpScreenView({
     setIsLoading(true);
     let inputName = "default";
     try {
-      if (userName === "") {
-        inputName = "userName";
-        throw Error("nama tidak boleh kosong!");
-      }
-
-      if (phoneNumber === "") {
-        inputName = "userPhoneNumber";
-        throw Error("nomor WA tidak boleh kosong!");
-      }
-
-      if (userName.length < 5 || userName.length > 15) {
-        inputName = "userName";
-        throw Error("panjang nama min 5 - 15 karakter !");
-      }
-
-      if (password === "") {
-        inputName = "password";
-        throw Error("password tidak boleh kosong!");
-      }
-
-      if (password.length < 6) {
-        inputName = "password";
-        throw Error("gunakan password minimal 6 karakter!");
-      }
-
-      if (deviceId === null) {
-        throw Error("Device Id Tidak Ditemukan!");
-      }
-
-      const payload: IUserCreateRequestModel = {
+      const payload: IUserUpdateRequestModel = {
         userName: userName,
         userPassword: password,
         userContact: phoneNumber,
-        userDeviceId: deviceId,
         userRole: "spg",
       };
 
-      await handlePostRequest({
-        path: "/users/register",
+      await handleUpdateRequest({
+        path: "/users/spg",
         body: payload,
       });
 
-      navigation.navigate("Login");
+      navigation.goBack();
     } catch (error: any) {
       console.log(error);
       setErrorInput({
@@ -121,37 +96,22 @@ export default function SignUpScreenView({
     }
   };
 
+  useEffect(() => {
+    setUserName(detailUser?.userName);
+    setPhoneNumber(detailUser?.userContact);
+    console.log(detailUser);
+  }, []);
+
   return (
     <Layout pt={8}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Heading
-          size="lg"
-          fontWeight="600"
-          color="coolGray.800"
-          _dark={{
-            color: "warmGray.50",
-          }}
-        >
-          Welcome
-        </Heading>
-        <Heading
-          mt="1"
-          _dark={{
-            color: "warmGray.200",
-          }}
-          color="coolGray.600"
-          fontWeight="medium"
-          size="xs"
-        >
-          Sign up to continue!
-        </Heading>
-
         <VStack space={1} mt="5">
           <FormControl>
             <FormControl.Label>User Nama</FormControl.Label>
             <Input
               isInvalid={errorInput.isError && errorInput.inputName === "name"}
               onChangeText={handleSetUserName}
+              value={userName}
               placeholder="nama"
               bgColor="#FFF"
               _focus={{
@@ -180,6 +140,7 @@ export default function SignUpScreenView({
               }
               onChangeText={handleSetUserPhoneNumber}
               placeholder="08232223333"
+              value={phoneNumber}
               bgColor="#FFF"
               _focus={{
                 bg: BASE_COLOR.blue[100],
@@ -264,31 +225,9 @@ export default function SignUpScreenView({
             rounded="xl"
           >
             <Text textAlign="center" fontSize="xl" color="#FFF">
-              {isLoading ? "Submit..." : "Sign Up"}
+              {isLoading ? "Loading..." : "Save"}
             </Text>
           </Pressable>
-
-          <HStack mt="6" space="2" justifyContent="center">
-            <Text
-              fontSize="sm"
-              color="coolGray.600"
-              _dark={{
-                color: "warmGray.200",
-              }}
-            >
-              Sudah Punya Akun?
-            </Text>
-            <Link
-              _text={{
-                color: "indigo.500",
-                fontWeight: "medium",
-                fontSize: "sm",
-              }}
-              onPress={() => navigation.navigate("Login")}
-            >
-              Login
-            </Link>
-          </HStack>
         </VStack>
       </ScrollView>
     </Layout>

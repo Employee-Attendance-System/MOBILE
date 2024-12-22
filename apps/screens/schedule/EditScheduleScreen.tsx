@@ -164,7 +164,7 @@ export default function EditScheduleScreenView({
 
   return (
     <Layout>
-      <FormControl>
+      <FormControl mt={5}>
         <FormControl.Label>Nama Jadwal</FormControl.Label>
         <Input
           placeholder="Enter schedule name"
@@ -292,6 +292,7 @@ export default function EditScheduleScreenView({
       <Button
         onPress={handleUpdateTask}
         bg="blue.500"
+        mt={5}
         _text={{ color: "white" }}
       >
         Simpan

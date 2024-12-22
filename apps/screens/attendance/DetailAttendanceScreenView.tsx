@@ -38,10 +38,6 @@ export default function DetailAttendanceScreenView({
     longitude: parseInt(store.storeLongitude),
   };
 
-  console.log(OFFICE_LOCATION);
-
-  console.log(store);
-
   const calculateDistance = (
     lat1: number,
     lon1: number,
@@ -138,7 +134,7 @@ export default function DetailAttendanceScreenView({
   if (loading) return <ListSkeleton />;
 
   return (
-    <Layout>
+    <Layout px={0}>
       <View style={styles.container}>
         {location && (
           <MapView style={styles.map} region={location}>
