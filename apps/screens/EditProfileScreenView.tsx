@@ -1,6 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   Box,
+  CheckIcon,
   FormControl,
   Heading,
   HStack,
@@ -9,6 +10,7 @@ import {
   Link,
   Pressable,
   ScrollView,
+  Select,
   Text,
   VStack,
   WarningOutlineIcon,
@@ -25,6 +27,7 @@ import {
   IUserCreateRequestModel,
   IUserUpdateRequestModel,
 } from "../models/userModel";
+import { ISupplierModel } from "../models/supplierModel";
 
 type EditProfileScreenViewPropsTypes = NativeStackScreenProps<
   INavigationParamList,
@@ -35,9 +38,12 @@ export default function EditProfileScreenView({
   navigation,
   route,
 }: EditProfileScreenViewPropsTypes) {
-  const { handleUpdateRequest } = useHttp();
+  const { handleUpdateRequest, handleGetRequest } = useHttp();
   const deviceId = useDeviceId();
   const detailUser = route.params.user;
+
+  const [suppliers, setSuppliers] = useState<ISupplierModel[]>([]);
+  const [supplierIdSelected, setSupplierIdSelected] = useState<number>();
 
   const [userName, setUserName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -76,6 +82,7 @@ export default function EditProfileScreenView({
         userPassword: password,
         userContact: phoneNumber,
         userRole: "spg",
+        userSupplierId: supplierIdSelected,
       };
 
       await handleUpdateRequest({
@@ -96,10 +103,28 @@ export default function EditProfileScreenView({
     }
   };
 
+  const getSuppliers = async () => {
+    try {
+      setIsLoading(true);
+      const result = await handleGetRequest({
+        path: "/suppliers",
+      });
+      if (result) {
+        setSuppliers(result.items);
+        console.log(result);
+      }
+    } catch (error: any) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     setUserName(detailUser?.userName);
     setPhoneNumber(detailUser?.userContact);
-    console.log(detailUser);
+    setSupplierIdSelected(detailUser?.userSupplierId);
+    getSuppliers();
   }, []);
 
   return (
@@ -158,6 +183,32 @@ export default function EditProfileScreenView({
             >
               {errorInput.message}
             </FormControl.ErrorMessage>
+          </FormControl>
+
+          <FormControl>
+            <FormControl.Label>Supplier</FormControl.Label>
+            <Select
+              selectedValue={supplierIdSelected + ""}
+              minWidth="200"
+              accessibilityLabel="Pilih Supplier"
+              placeholder="pilih supplier"
+              defaultValue={supplierIdSelected + ""}
+              onValueChange={(itemValue) =>
+                setSupplierIdSelected(Number(itemValue))
+              }
+              _selectedItem={{
+                bg: "blue.200",
+                endIcon: <CheckIcon size="5" />,
+              }}
+            >
+              {suppliers.map((item) => (
+                <Select.Item
+                  key={item.id}
+                  label={item.userName}
+                  value={item.userId.toString()}
+                />
+              ))}
+            </Select>
           </FormControl>
 
           <FormControl>

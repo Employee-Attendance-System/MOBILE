@@ -1,18 +1,12 @@
-import { IRootModel } from './rootModel'
+import { IRootModel } from "./rootModel";
 
 export interface ISupplierModel extends IRootModel {
-  supplierId: number
-  supplierName: number
-  supplierContact: number
-}
-
-export interface ISupplierUpdateRequestModel {
-  supplierId: number
-  supplierName?: number
-  supplierContact?: number
-}
-
-export interface ISupplierCreateRequestModel {
-  supplierName: number
-  supplierContact: number
+  userId: string;
+  userName: string;
+  userEmail: string;
+  userPassword: string;
+  userRole: "admin" | "spg" | "supplier" | string;
+  userDeviceId: string;
+  userContact: string;
+  userSupplierId: number;
 }

@@ -8,6 +8,7 @@ export interface IUserModel extends IRootModel {
   userRole: "admin" | "spg" | "supplier" | string;
   userDeviceId: string;
   userContact: string;
+  userSupplierId: number;
 }
 
 export interface IUserUpdateRequestModel {
@@ -17,6 +18,7 @@ export interface IUserUpdateRequestModel {
   userRole?: "admin" | "spg" | "supplier" | string;
   userDeviceId?: string;
   userContact?: string;
+  userSupplierId?: number;
 }
 
 export interface IUserCreateRequestModel {
@@ -25,6 +27,7 @@ export interface IUserCreateRequestModel {
   userRole: "admin" | "spg" | "supplier" | string;
   userDeviceId: string;
   userContact: string;
+  userSupplierId: number;
 }
 
 export interface IUserLoginRequestModel {

@@ -1,6 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   Box,
+  CheckIcon,
   FormControl,
   Heading,
   HStack,
@@ -9,11 +10,12 @@ import {
   Link,
   Pressable,
   ScrollView,
+  Select,
   Text,
   VStack,
   WarningOutlineIcon,
 } from "native-base";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import { BASE_COLOR } from "../utilities/baseColor";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -22,6 +24,7 @@ import { useHttp } from "../hooks/useHttp";
 import { appConfig } from "../configs";
 import useDeviceId from "../hooks/useDeviceId";
 import { IUserCreateRequestModel } from "../models/userModel";
+import { ISupplierModel } from "../models/supplierModel";
 
 type SignUpScreenViewPropsTypes = NativeStackScreenProps<
   INavigationParamList,
@@ -31,13 +34,15 @@ type SignUpScreenViewPropsTypes = NativeStackScreenProps<
 export default function SignUpScreenView({
   navigation,
 }: SignUpScreenViewPropsTypes) {
-  const { handlePostRequest } = useHttp();
+  const { handlePostRequest, handleGetRequest } = useHttp();
   const deviceId = useDeviceId();
 
+  const [suppliers, setSuppliers] = useState<ISupplierModel[]>([]);
   const [userName, setUserName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [supplierIdSelected, setSupplierIdSelected] = useState<number>();
 
   const [errorInput, setErrorInput] = useState({
     inputName: "",
@@ -95,7 +100,12 @@ export default function SignUpScreenView({
         throw Error("Device Id Tidak Ditemukan!");
       }
 
+      if (supplierIdSelected === null) {
+        throw Error("Supplier Tidak Ditemukan!");
+      }
+
       const payload: IUserCreateRequestModel = {
+        userSupplierId: supplierIdSelected!,
         userName: userName,
         userPassword: password,
         userContact: phoneNumber,
@@ -120,6 +130,27 @@ export default function SignUpScreenView({
       setIsLoading(false);
     }
   };
+
+  const getSuppliers = async () => {
+    try {
+      setIsLoading(true);
+      const result = await handleGetRequest({
+        path: "/suppliers",
+      });
+      if (result) {
+        setSuppliers(result.items);
+        console.log(result);
+      }
+    } catch (error: any) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getSuppliers();
+  }, []);
 
   return (
     <Layout pt={8}>
@@ -170,6 +201,31 @@ export default function SignUpScreenView({
             >
               {errorInput.message}
             </FormControl.ErrorMessage>
+          </FormControl>
+
+          <FormControl>
+            <FormControl.Label>Supplier</FormControl.Label>
+            <Select
+              selectedValue={supplierIdSelected + ""}
+              minWidth="200"
+              accessibilityLabel="Pilih Supplier"
+              placeholder="pilih supplier"
+              onValueChange={(itemValue) =>
+                setSupplierIdSelected(Number(itemValue))
+              }
+              _selectedItem={{
+                bg: "blue.200",
+                endIcon: <CheckIcon size="5" />,
+              }}
+            >
+              {suppliers.map((item) => (
+                <Select.Item
+                  key={item.id}
+                  label={item.userName}
+                  value={item.userId.toString()}
+                />
+              ))}
+            </Select>
           </FormControl>
 
           <FormControl>
