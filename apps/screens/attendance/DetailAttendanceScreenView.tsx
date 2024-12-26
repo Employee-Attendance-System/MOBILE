@@ -34,9 +34,11 @@ export default function DetailAttendanceScreenView({
   const MAX_DISTANCE = 100;
 
   const OFFICE_LOCATION = {
-    latitude: parseInt(store.storeLatitude),
-    longitude: parseInt(store.storeLongitude),
+    latitude: Number(store.storeLatitude),
+    longitude: Number(store.storeLongitude),
   };
+
+  console.log(OFFICE_LOCATION);
 
   const calculateDistance = (
     lat1: number,
@@ -126,7 +128,7 @@ export default function DetailAttendanceScreenView({
   useEffect(() => {
     const interval = setInterval(() => {
       getLocation();
-    }, 1000 * 5); // Update every 5 seconds
+    }, 1000 * 10);
 
     return () => clearInterval(interval);
   }, []);

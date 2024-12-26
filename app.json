@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "fresh-absensi",
-    "slug": "fresh-absensi",
+    "name": "dinasti-absensi",
+    "slug": "dinasti-absensi",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,24 +13,31 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.everybyte.dinastiabsensi"
     },
     "android": {
-      "versionCode": 16,
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#3b82f6"
       },
-      "package": "com.mendigitalkan.freshabsensi",
-      "permissions": ["ACCESS_FINE_LOCATION"]
+      "package": "com.everybyte.dinastiabsensi",
+      "permissions": [
+        "ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "eas": {}
+      "eas": {
+        "projectId": "27758f86-9d77-4d49-b84f-5f5dec91f548"
+      }
     }
   },
   "plugins": [
