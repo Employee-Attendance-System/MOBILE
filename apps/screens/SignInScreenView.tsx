@@ -209,7 +209,7 @@ export default function SignUpScreenView({
               selectedValue={supplierIdSelected + ""}
               minWidth="200"
               accessibilityLabel="Pilih Supplier"
-              placeholder="pilih supplier"
+              // placeholder="pilih supplier"
               onValueChange={(itemValue) =>
                 setSupplierIdSelected(Number(itemValue))
               }
