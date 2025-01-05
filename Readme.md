@@ -1,69 +1,71 @@
-# Employee Attendance System
+# React Native Expo Project Installation Guide
 
-An advanced Employee Attendance Management System using GPS technology for retail employees (SPG) working at various store branches. This application enables employees to manage their work schedules and ensures attendance can only be marked at designated work locations. The system features multiple user roles, including Super Admin, Admin, Supplier, and SPG.
+This guide outlines the steps to set up and run a React Native project using Expo.
 
-## Project Structure
+## Prerequisites
 
-### Mobile Application
+Before you begin, ensure the following are installed on your system:
 
-- **Framework**: React Native
-- **Purpose**: Provides mobile access for employees (SPG) to manage work schedules and mark attendance at their respective branches using GPS validation.
+1. **Node.js** (LTS version recommended): [Download Node.js](https://nodejs.org/)
+2. **Expo CLI**: Install using `npm` or `yarn` (see instructions below).
+3. **Code Editor**: [Visual Studio Code](https://code.visualstudio.com/) is recommended.
+4. **Mobile Device or Emulator**:
+   - **Expo Go** app (for iOS/Android): [Expo Go on App Store](https://apps.apple.com/) or [Expo Go on Google Play](https://play.google.com/store).
+   - Android Emulator or iOS Simulator (optional).
 
-### Frontend Dashboard
+---
 
-- **Framework**: React.js with Material UI
-- **Purpose**: Provides a web interface for Super Admin, Admin, and Supplier roles to manage attendance data, schedules, and employee assignments.
+## Installation Steps
 
-### Backend API
+### 1. Clone the Repository
 
-- **Framework**: Express.js
-- **Language**: TypeScript
-- **Purpose**: Serves as the backend API for handling business logic, user authentication, role-based access control, and integration with GPS services for location validation.
+Clone the project repository to your local machine:
 
-## Key Features
+```bash
+git clone <repository-url>
+```
 
-1. **Role Management**
+Navigate to the project directory:
 
-   - **Super Admin**: Manages system-wide configurations, users, and branches.
-   - **Admin**: Manages branch-specific employees, schedules, and attendance.
-   - **Supplier**: Oversees specific operations related to supplier management.
-   - **SPG**: Uses the mobile app to manage their schedules and attendance.
+```bash
+cd <project-folder-name>
+```
 
-2. **GPS-based Attendance**  
-   Employees can only mark attendance when they are physically present at their designated branch, verified via GPS.
+2. Install Expo CLI
+   If you don’t have Expo CLI installed, install it globally:
 
-3. **Work Schedule Management**
+```bash
+npm install -g expo-cli
+```
 
-   - Employees can view and manage their work schedules through the mobile application.
-   - Admins can assign schedules to employees from the dashboard.
+3. Install Project Dependencies
+   Install the required project dependencies using npm or yarn:
 
-4. **Branch Management**  
-   Super Admins and Admins can manage branch details, including geolocation for attendance validation.
+```bash
+npm install
+```
 
-5. **Real-time Notifications**  
-   Employees receive notifications regarding work schedule updates or attendance reminders.
+4. Start the Expo Development Server
+   Start the development server using Expo CLI:
 
-6. **Reporting and Analytics**  
-   Dashboard provides analytics on attendance patterns, schedule adherence, and branch performance.
+```bash
+npx expo start
+```
 
-## Tech Stack
+This command will open a web browser with the Expo Developer Tools.
 
-### 1. Mobile Application
+### Running the Application
 
-- **Framework**: React Native
-- **State Management**: Context API
-- **Libraries**: React Navigation, Expo Location, Axios
-
-### 2. Frontend Dashboard
-
-- **Framework**: React.js
-- **UI Library**: Material UI
-- **State Management**: Context API
-- **Libraries**: React Router, Axios
-
-### 3. Backend API
-
-- **Framework**: Express.js
-- **Language**: TypeScript
-- **Database**: MySQL with Sequelize ORM
-- **Authentication**: JSON Web Tokens (JWT)
+1. On a Physical Device
+   Install the Expo Go app on your phone.
+   Scan the QR code displayed in the Expo Developer Tools or terminal using the Expo Go app.
+2. On an Android Emulator
+   Ensure Android Studio and the Android Emulator are installed.
+   Start the Android Emulator.
+   Run the app on the emulator from the Expo Developer Tools or terminal.
+3. On an iOS Simulator (Mac Only)
+   Ensure Xcode and its Command Line Tools are installed.
+   Start the iOS Simulator.
+   Run the app on the simulator from the Expo Developer Tools or terminal.
+   Additional Commands
+   Build APK/IPA for production:
