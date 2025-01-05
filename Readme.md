@@ -1,4 +1,4 @@
-# React Native Expo Project Installation Guide
+# Installation Guide
 
 This guide outlines the steps to set up and run a React Native project using Expo.
 
