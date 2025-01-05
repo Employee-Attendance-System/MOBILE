@@ -2,8 +2,7 @@ export const appConfig = {
   localStorage: {
     appKey: "appKey",
   },
-  // baseUrl: "http://192.168.1.20:8000/api/v1",
-  baseUrl: "https://jasaapk.us/dinasti-absensi/api/v1",
+  baseUrl: "http://192.168.1.20:8000/api/v1",
   colors: {
     primary: "#3b82f6",
     blueSecondary: "#1E90FF00",
